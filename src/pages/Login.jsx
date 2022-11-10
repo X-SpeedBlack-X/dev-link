@@ -2,6 +2,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Input } from "../components/Input";
 import { Logo } from "../components/Logo";
 import { auth } from "../services/firebaseConnection";
 
@@ -37,18 +38,16 @@ export function Login() {
         className="flex flex-col w-full max-w-2xl"
         onSubmit={handleLogin}
       >
-        <input
-          className="border-0 h-9 mb-4 rounded px-2 outline-none text-gray-500"
+        <Input
+          placeholder="Digite seu e-mail"
           type="email"
-          placeholder="Digite seu Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
-          className="border-0  h-9 mb-4 rounded px-2 outline-none text-gray-500"
+
+        <Input
+          placeholder="*********"
           type="password"
-          placeholder="*******"
-          autoComplete="on"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
