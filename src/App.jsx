@@ -3,6 +3,7 @@ import { Admin } from "./pages/Admin";
 import { Error404 } from "./pages/Error404";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
+import { Private } from "./routes/Private";
 
 const router = createBrowserRouter([
   {
@@ -17,7 +18,11 @@ const router = createBrowserRouter([
 
   {
     path: "/admin",
-    element: <Admin />,
+    element: (
+      <Private>
+        <Admin />
+      </Private>
+    ),
   },
   { path: "*", element: <Error404 /> },
 ]);
