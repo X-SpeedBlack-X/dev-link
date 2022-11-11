@@ -1,5 +1,13 @@
-import { addDoc, collection } from "firebase/firestore";
-import { useState } from "react";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { FiTrash2 } from "react-icons/fi";
 import { MdAddLink } from "react-icons/md";
 import { toast } from "react-toastify";
@@ -14,6 +22,28 @@ export function Admin() {
 
   const [backgroundColorInput, setBackgroundColorInput] = useState("#f1f1f1");
   const [textColorInput, setTextColorInput] = useState("#121212");
+
+  const [links, setLinks] = useState([]);
+
+  useEffect(() => {
+    const linksRef = collection(db, "links");
+    const queryRef = query(linksRef, orderBy("createdAt", "asc"));
+
+    onSnapshot(queryRef, (snapshot) => {
+      let list = [];
+      snapshot.forEach((doc) => {
+        list.push({
+          id: doc.id,
+          name: doc.data().name,
+          url: doc.data().url,
+          bg: doc.data().bg,
+          color: doc.data().color,
+        });
+      });
+
+      setLinks(list);
+    });
+  }, []);
 
   async function handleRegister(e) {
     e.preventDefault();
@@ -34,11 +64,18 @@ export function Admin() {
         toast.success("Link registrado com sucesso ");
       })
       .catch((error) => {
-        toast.error("Erro ao registrar o link" + error);
+        console.log("Error ao registrar" + error);
+        toast.error("Erro ao registrar o link");
       });
   }
+
+  async function handleDeleteLink(id) {
+    const docRef = doc(db, "links", id);
+    await deleteDoc(docRef);
+  }
+
   return (
-    <div className="flex flex-col items-center min-h-screen ">
+    <div className="flex flex-col items-center min-h-screen pb-6">
       <Header />
       <Logo />
 
@@ -118,22 +155,27 @@ export function Admin() {
       </form>
 
       <h2 className="text-white mt-7 mr-0 mb-4 ml-0">Meus links</h2>
-      <article
-        className="w-[90%] max-w-2xl flex items-center justify-between bg-black/40 rounded py-4 px-3 text-white animate-Pop"
-        style={{
-          backgroundColor: "#000",
-          color: "#fff",
-        }}
-      >
-        <p>Grupo do wpp</p>
-        <button className="">
-          {" "}
-          <FiTrash2
-            size={28}
-            className="border-dashed border-[1px] border-white bg-black hover:bg-red-700 py-1 rounded text-white"
-          />
-        </button>
-      </article>
+
+      {links.map((item, index) => {
+        return (
+          <article
+            key={index}
+            className="w-[90%] max-w-2xl flex items-center justify-between mb-2 bg-black/40 rounded py-4 px-3 text-white animate-Pop"
+            style={{
+              backgroundColor: item.bg,
+              color: item.color,
+            }}
+          >
+            <p>{item.name}</p>
+            <button
+              className="border-dashed border-[1px] border-white bg-black hover:bg-red-700 py-1 px-2 rounded text-white"
+              onClick={() => handleDeleteLink(item.id)}
+            >
+              <FiTrash2 size={18} />
+            </button>
+          </article>
+        );
+      })}
     </div>
   );
 }
