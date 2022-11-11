@@ -3,6 +3,7 @@ import { Admin } from "./pages/Admin";
 import { Error404 } from "./pages/Error404";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
+import { Networks } from "./pages/Networks";
 import { Private } from "./routes/Private";
 
 const router = createBrowserRouter([
@@ -24,6 +25,16 @@ const router = createBrowserRouter([
       </Private>
     ),
   },
+
+  {
+    path: "/admin/social",
+    element: (
+      <Private>
+        <Networks />,
+      </Private>
+    ),
+  },
+
   { path: "*", element: <Error404 /> },
 ]);
 
